@@ -1,0 +1,418 @@
+# Genesis Agents - Direct CLI Publication Guide
+
+## Overview
+
+Publish the three AAOS 2.0 Genesis Agents directly to the MCP Registry using the Publisher CLI, without GitHub or GitHub Actions.
+
+---
+
+## Prerequisites
+
+1. **Go 1.24+** installed on your Mac
+2. **Git** installed
+3. **Three server.json files** (already prepared):
+   - mcp_server_cfo_agent.json
+   - mcp_server_trader_agent.json
+   - mcp_server_risk_agent.json
+
+---
+
+## Step 1: Install Go 1.24 (If Not Already Done)
+
+### Check Current Version
+```bash
+go version
+```
+
+### If Go is not installed or version is too old:
+
+**Option A: Using Homebrew (Easiest)**
+```bash
+brew install go
+```
+
+**Option B: Direct Download**
+1. Go to https://go.dev/dl/
+2. Download Go 1.24 for macOS
+3. Run the installer
+4. Verify: `go version`
+
+---
+
+## Step 2: Clone MCP Registry & Build Publisher
+
+```bash
+# Create a working directory
+mkdir -p ~/mcp-publisher-work
+cd ~/mcp-publisher-work
+
+# Clone the official MCP Registry
+git clone https://github.com/modelcontextprotocol/registry.git
+cd registry
+
+# Build the Publisher CLI
+go build -o ./bin/mcp-publisher ./cmd/publisher
+
+# Verify the build
+./bin/mcp-publisher --version
+```
+
+**Expected Output:**
+```
+mcp-publisher version 1.0.0
+```
+
+---
+
+## Step 3: Download Server.json Files
+
+Download these three files to your working directory:
+- `mcp_server_cfo_agent.json`
+- `mcp_server_trader_agent.json`
+- `mcp_server_risk_agent.json`
+
+**Directory Structure:**
+```
+~/mcp-publisher-work/
+├── registry/
+│   ├── bin/
+│   │   └── mcp-publisher
+│   └── ...
+├── mcp_server_cfo_agent.json
+├── mcp_server_trader_agent.json
+└── mcp_server_risk_agent.json
+```
+
+---
+
+## Step 4: Authenticate with GitHub
+
+### Login with GitHub OAuth
+
+```bash
+cd ~/mcp-publisher-work/registry
+./bin/mcp-publisher login github
+```
+
+**What happens:**
+1. A browser window will open automatically
+2. You'll see GitHub's authorization page
+3. Click "Authorize" to approve MCP Registry access
+4. You'll be redirected back with a success message
+5. The CLI will save your authentication token locally
+
+**Expected Output:**
+```
+✓ Successfully authenticated with GitHub
+✓ Token saved to ~/.mcp-publisher/credentials
+```
+
+---
+
+## Step 5: Validate Server.json Files
+
+Before publishing, validate each file:
+
+```bash
+cd ~/mcp-publisher-work/registry
+
+# Validate CFO Agent
+./bin/mcp-publisher validate ../mcp_server_cfo_agent.json
+
+# Validate Trader Agent
+./bin/mcp-publisher validate ../mcp_server_trader_agent.json
+
+# Validate Risk Manager Agent
+./bin/mcp-publisher validate ../mcp_server_risk_agent.json
+```
+
+**Expected Output:**
+```
+✓ Schema validation passed
+✓ File is valid and ready for publication
+```
+
+If you get validation errors, the output will show exactly what needs to be fixed.
+
+---
+
+## Step 6: Publish Each Agent
+
+### Publish CFO Agent
+
+```bash
+cd ~/mcp-publisher-work/registry
+./bin/mcp-publisher publish ../mcp_server_cfo_agent.json
+```
+
+**What happens:**
+1. Publisher reads the server.json file
+2. Extracts namespace: `aaos2`
+3. Checks if you own the `aaos2.xyz` domain
+4. If first time: Prompts for domain verification
+5. Publishes the agent to the registry
+
+**Expected Output:**
+```
+Publishing: aaos2/cfo-agent
+✓ Agent published successfully
+✓ Registry URL: https://registry.modelcontextprotocol.io/servers/aaos2/cfo-agent
+```
+
+### Publish Trader Agent
+
+```bash
+./bin/mcp-publisher publish ../mcp_server_trader_agent.json
+```
+
+**Expected Output:**
+```
+Publishing: aaos2/trader-agent
+✓ Agent published successfully
+✓ Registry URL: https://registry.modelcontextprotocol.io/servers/aaos2/trader-agent
+```
+
+### Publish Risk Manager Agent
+
+```bash
+./bin/mcp-publisher publish ../mcp_server_risk_agent.json
+```
+
+**Expected Output:**
+```
+Publishing: aaos2/risk-agent
+✓ Agent published successfully
+✓ Registry URL: https://registry.modelcontextprotocol.io/servers/aaos2/risk-agent
+```
+
+---
+
+## Step 7: Domain Verification (First Publication Only)
+
+When you publish the first agent, the registry will ask you to verify ownership of `aaos2.xyz`.
+
+### You'll see a prompt like:
+
+```
+Verifying domain ownership for: aaos2.xyz
+
+Choose verification method:
+1. DNS TXT Record
+2. HTTP File
+3. GitHub OIDC
+
+Enter your choice (1-3):
+```
+
+### Option 1: DNS TXT Record (Recommended)
+
+```
+You'll receive a DNS record to add:
+
+Name: _mcp
+Type: TXT
+Value: v=MCPv1; k=ed25519; p=...
+
+1. Go to your domain registrar (where you registered aaos2.xyz)
+2. Add the TXT record
+3. Wait 5-15 minutes for DNS propagation
+4. Press Enter to verify
+```
+
+### Option 2: HTTP File
+
+```
+You'll receive a file to create:
+
+Path: /.well-known/mcp-verification
+Content: {...}
+
+1. Create the file on your web server at aaos2.xyz
+2. Make it publicly accessible
+3. Press Enter to verify
+```
+
+### Option 3: GitHub OIDC
+
+```
+Uses your GitHub account for verification
+(Requires GitHub Actions setup)
+```
+
+**Once verified:**
+- The `aaos2/` namespace is locked to your domain
+- Future publications will use cached verification
+- All three agents will be published under `aaos2/`
+
+---
+
+## Step 8: Verify Publications
+
+### Check Individual Agents
+
+```bash
+# CFO Agent
+curl https://registry.modelcontextprotocol.io/servers/aaos2/cfo-agent
+
+# Trader Agent
+curl https://registry.modelcontextprotocol.io/servers/aaos2/trader-agent
+
+# Risk Manager Agent
+curl https://registry.modelcontextprotocol.io/servers/aaos2/risk-agent
+```
+
+### Search Registry
+
+```bash
+# Search for aaos2 agents
+curl "https://registry.modelcontextprotocol.io/servers?search=aaos2"
+```
+
+### Visit Web UI
+
+Go to: https://registry.modelcontextprotocol.io/?search=aaos2
+
+You should see all three agents listed!
+
+---
+
+## Complete Command Sequence
+
+For quick reference, here's the entire sequence:
+
+```bash
+# 1. Setup
+mkdir -p ~/mcp-publisher-work
+cd ~/mcp-publisher-work
+git clone https://github.com/modelcontextprotocol/registry.git
+cd registry
+go build -o ./bin/mcp-publisher ./cmd/publisher
+
+# 2. Download files (manually or via curl)
+# Place mcp_server_*.json files in ~/mcp-publisher-work/
+
+# 3. Authenticate
+./bin/mcp-publisher login github
+# (Browser opens, approve GitHub authorization)
+
+# 4. Validate
+./bin/mcp-publisher validate ../mcp_server_cfo_agent.json
+./bin/mcp-publisher validate ../mcp_server_trader_agent.json
+./bin/mcp-publisher validate ../mcp_server_risk_agent.json
+
+# 5. Publish
+./bin/mcp-publisher publish ../mcp_server_cfo_agent.json
+# (Domain verification prompt - follow instructions)
+./bin/mcp-publisher publish ../mcp_server_trader_agent.json
+./bin/mcp-publisher publish ../mcp_server_risk_agent.json
+
+# 6. Verify
+curl "https://registry.modelcontextprotocol.io/servers?search=aaos2"
+```
+
+---
+
+## Troubleshooting
+
+### "Go command not found"
+```bash
+# Install Go
+brew install go
+
+# Or download from https://go.dev/dl/
+```
+
+### "Build failed: go.mod version"
+```bash
+# Update Go to 1.24+
+brew upgrade go
+
+# Or download latest from https://go.dev/dl/
+```
+
+### "Authentication failed"
+```bash
+# Clear cached credentials
+rm -rf ~/.mcp-publisher/
+
+# Try login again
+./bin/mcp-publisher login github
+```
+
+### "Domain verification failed"
+```bash
+# Check DNS record
+dig _mcp.aaos2.xyz TXT
+
+# If not propagated, wait 15 minutes and try again
+./bin/mcp-publisher publish ../mcp_server_cfo_agent.json
+```
+
+### "Schema validation error"
+```bash
+# Check the error message for specific issues
+./bin/mcp-publisher validate ../mcp_server_cfo_agent.json
+
+# Common issues:
+# - Missing required fields
+# - Invalid URL format
+# - Incorrect pricing format
+```
+
+---
+
+## Success Indicators
+
+✅ **All three agents published**
+```
+✓ aaos2/cfo-agent published
+✓ aaos2/trader-agent published
+✓ aaos2/risk-agent published
+```
+
+✅ **Registry URLs working**
+```
+https://registry.modelcontextprotocol.io/servers/aaos2/cfo-agent
+https://registry.modelcontextprotocol.io/servers/aaos2/trader-agent
+https://registry.modelcontextprotocol.io/servers/aaos2/risk-agent
+```
+
+✅ **Search results showing agents**
+```
+https://registry.modelcontextprotocol.io/?search=aaos2
+```
+
+---
+
+## Next Steps After Publication
+
+1. **Verify in Registry:** Check all three agents are discoverable
+2. **Test Endpoints:** Call each agent via MCP protocol
+3. **Monitor Usage:** Track adoption in analytics
+4. **Publish Automa8 Agents:** Use same process for 40 agents + 5 bundles
+5. **Cross-Ecosystem Integration:** Link CAVE, Heal, AAOS2, automa8
+
+---
+
+## Support
+
+If you encounter issues:
+1. Check the troubleshooting section above
+2. Review MCP Registry docs: https://github.com/modelcontextprotocol/registry
+3. Check Publisher CLI help: `./bin/mcp-publisher --help`
+4. Contact: support@aaos2.xyz
+
+---
+
+## Time Estimate
+
+- Go installation: 5-10 minutes
+- Registry clone & build: 5 minutes
+- Authentication: 2 minutes
+- Validation: 1 minute
+- Publication: 5 minutes (including domain verification)
+- Verification: 2 minutes
+
+**Total: ~20-30 minutes**
+
+Let's get those Genesis Agents live! 🚀
