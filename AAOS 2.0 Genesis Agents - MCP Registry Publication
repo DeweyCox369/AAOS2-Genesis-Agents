@@ -1,0 +1,117 @@
+# AAOS 2.0 Genesis Agents - MCP Registry Publication
+
+This repository contains the three Genesis Agents for the Autonomous Agent Operating System (AAOS 2.0), configured for publication to the official Model Context Protocol (MCP) Registry.
+
+## Agents
+
+### 1. CFO Agent (`aaos2/cfo-agent`)
+**Autonomous Chief Financial Officer** for portfolio management, asset allocation, and yield optimization with x402-PRIVATE privacy support.
+
+**Capabilities:**
+- Portfolio management and analysis
+- Asset allocation optimization
+- Yield optimization
+- Treasury management
+- Capital allocation
+- Financial planning
+- Confidential transactions via x402-PRIVATE
+
+**File:** `mcp_server_cfo_agent.json`
+
+### 2. Trader Agent (`aaos2/trader-agent`)
+**Autonomous Trader** for spot trading, arbitrage, and market making with MEV protection via x402.
+
+**Capabilities:**
+- Spot trading across CEX/DEX
+- Arbitrage detection and execution
+- Market making
+- Automated trading strategies
+- High-frequency trading
+- Cross-chain trading
+- Confidential trading with MEV protection
+
+**File:** `mcp_server_trader_agent.json`
+
+### 3. Risk Manager Agent (`aaos2/risk-agent`)
+**Autonomous Chief Risk Officer** for portfolio risk assessment, hedging, and compliance with x402-PRIVATE privacy support.
+
+**Capabilities:**
+- Risk assessment and analysis
+- Value-at-Risk (VaR) calculation
+- Stress testing
+- Hedging strategy recommendations
+- Compliance monitoring
+- Liquidation risk assessment
+- Privacy-preserving compliance verification
+
+**File:** `mcp_server_risk_agent.json`
+
+## Repository Structure
+
+```
+AAOS2-Genesis-Agents/
+├── mcp_server_cfo_agent.json
+├── mcp_server_trader_agent.json
+├── mcp_server_risk_agent.json
+├── .github/
+│   └── workflows/
+│       └── publish-to-mcp-registry.yml
+└── README.md
+```
+
+## Publication Process
+
+This repository uses GitHub Actions to automatically publish all three agents to the MCP Registry.
+
+### Automatic Publication
+
+The workflow triggers on:
+- Push to `main` branch
+- Manual workflow dispatch
+
+### Manual Trigger
+
+To manually trigger publication:
+1. Go to the **Actions** tab
+2. Select **Publish AAOS Genesis Agents to MCP Registry**
+3. Click **Run workflow**
+
+### Workflow Steps
+
+1. ✅ Clone the MCP Registry repository
+2. ✅ Build the Publisher CLI
+3. ✅ Authenticate using GitHub OIDC
+4. ✅ Publish CFO Agent
+5. ✅ Publish Trader Agent
+6. ✅ Publish Risk Manager Agent
+
+## Registry URLs
+
+Once published, the agents are discoverable at:
+
+- **CFO Agent:** https://registry.modelcontextprotocol.io/servers/aaos2/cfo-agent
+- **Trader Agent:** https://registry.modelcontextprotocol.io/servers/aaos2/trader-agent
+- **Risk Manager Agent:** https://registry.modelcontextprotocol.io/servers/aaos2/risk-agent
+
+## Configuration
+
+Each agent is configured with:
+- **NPM Package Distribution** (`@aaos2/[agent-name]`)
+- **Docker Container Distribution** (`ghcr.io/aaos2/[agent-name]`)
+- **Environment Variables** for API keys and configuration
+- **x402 and x402-PRIVATE Support** for payment protocols
+
+## Domain Verification
+
+The agents are registered under the `aaos2/` namespace, which is verified to be owned by the domain `aaos2.xyz`.
+
+## Support
+
+For issues or questions:
+- **MCP Registry:** https://github.com/modelcontextprotocol/registry
+- **AAOS 2.0:** https://aaos2.xyz
+- **Documentation:** https://aaos2.xyz/docs
+
+## License
+
+These agents are part of the AAOS 2.0 platform and are subject to the platform's licensing terms.
