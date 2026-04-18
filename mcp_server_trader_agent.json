@@ -1,0 +1,26 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "aaos2/trader-agent",
+  "description": "Autonomous trader for spot trading, arbitrage, and market making with MEV protection via x402",
+  "repository": {
+    "url": "https://github.com/aaos2/trader-agent.git",
+    "source": "github"
+  },
+  "packages": {
+    "npm": "@aaos2/trader-agent",
+    "docker": "ghcr.io/aaos2/trader-agent:latest"
+  },
+  "contact": {
+    "email": "support@aaos2.xyz",
+    "url": "https://aaos2.xyz"
+  },
+  "protocols": {
+    "x402": {
+      "tier": "standard",
+      "pricing": {
+        "base": "0.0005 USDC",
+        "per_call": "0.00005 USDC"
+      }
+    }
+  }
+}

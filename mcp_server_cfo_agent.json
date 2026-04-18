@@ -1,0 +1,33 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "aaos2/cfo-agent",
+  "description": "Autonomous CFO for portfolio management, asset allocation, and yield optimization with x402-PRIVATE",
+  "repository": {
+    "url": "https://github.com/aaos2/cfo-agent.git",
+    "source": "github"
+  },
+  "packages": {
+    "npm": "@aaos2/cfo-agent",
+    "docker": "ghcr.io/aaos2/cfo-agent:latest"
+  },
+  "contact": {
+    "email": "support@aaos2.xyz",
+    "url": "https://aaos2.xyz"
+  },
+  "protocols": {
+    "x402": {
+      "tier": "premium",
+      "pricing": {
+        "base": "0.001 USDC",
+        "per_call": "0.0001 USDC"
+      }
+    },
+    "x402-PRIVATE": {
+      "tier": "enterprise",
+      "pricing": {
+        "base": "0.01 USDC",
+        "per_call": "0.001 USDC"
+      }
+    }
+  }
+}

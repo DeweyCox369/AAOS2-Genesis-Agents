@@ -1,0 +1,58 @@
+name: Publish AAOS Genesis Agents to MCP Registry
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24'
+
+      - name: Clone MCP Registry
+        run: |
+          cd /tmp
+          git clone https://github.com/modelcontextprotocol/registry.git
+          cd registry
+          go build -o ./bin/mcp-publisher ./cmd/publisher
+
+      - name: Authenticate with GitHub OIDC
+        run: |
+          cd /tmp/registry
+          ./bin/mcp-publisher login github-oidc
+
+      - name: Publish CFO Agent
+        run: |
+          cd /tmp/registry
+          ./bin/mcp-publisher publish ${{ github.workspace }}/mcp_server_cfo_agent.json
+
+      - name: Publish Trader Agent
+        run: |
+          cd /tmp/registry
+          ./bin/mcp-publisher publish ${{ github.workspace }}/mcp_server_trader_agent.json
+
+      - name: Publish Risk Manager Agent
+        run: |
+          cd /tmp/registry
+          ./bin/mcp-publisher publish ${{ github.workspace }}/mcp_server_risk_agent.json
+
+      - name: Verify Publications
+        run: |
+          echo "✅ All three AAOS Genesis Agents published to MCP Registry"
+          echo "Registry URLs:"
+          echo "- CFO Agent: https://registry.modelcontextprotocol.io/servers/aaos2/cfo-agent"
+          echo "- Trader Agent: https://registry.modelcontextprotocol.io/servers/aaos2/trader-agent"
+          echo "- Risk Manager Agent: https://registry.modelcontextprotocol.io/servers/aaos2/risk-agent"

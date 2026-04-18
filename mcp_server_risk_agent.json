@@ -1,0 +1,33 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "aaos2/risk-agent",
+  "description": "Autonomous CRO for portfolio risk assessment, hedging, and compliance with x402-PRIVATE",
+  "repository": {
+    "url": "https://github.com/aaos2/risk-agent.git",
+    "source": "github"
+  },
+  "packages": {
+    "npm": "@aaos2/risk-agent",
+    "docker": "ghcr.io/aaos2/risk-agent:latest"
+  },
+  "contact": {
+    "email": "support@aaos2.xyz",
+    "url": "https://aaos2.xyz"
+  },
+  "protocols": {
+    "x402": {
+      "tier": "premium",
+      "pricing": {
+        "base": "0.001 USDC",
+        "per_call": "0.0001 USDC"
+      }
+    },
+    "x402-PRIVATE": {
+      "tier": "enterprise",
+      "pricing": {
+        "base": "0.01 USDC",
+        "per_call": "0.001 USDC"
+      }
+    }
+  }
+}
